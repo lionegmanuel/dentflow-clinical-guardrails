@@ -18,9 +18,6 @@ const DEFAULT_CONFIG: Required<DentalPipelineConfig> = {
   enableTimingLogs: false,
 };
 
-/**
- * Builds enriched context prompt to inject into conversational LLM agent.
- */
 function buildEnrichedContext(
   triage: TriageEvaluation,
   clinicName: string,
@@ -60,10 +57,6 @@ function buildEnrichedContext(
   ].join("\n");
 }
 
-/**
- * Executes the deterministic pre-LLM clinical guardrail pipeline.
- * Sub-3ms latency guaranteed.
- */
 export function runTriagePipeline(
   message: string,
   config?: DentalPipelineConfig,
@@ -75,7 +68,6 @@ export function runTriagePipeline(
   const processingTimeMs =
     Math.round((performance.now() - startTime) * 100) / 100;
 
-  // Medical Red Flag Emergency Override
   if (triage.urgency === "emergency" || triage.isRedFlagPresent) {
     const overrideResult: DentalPipelineResult = {
       action: "emergency_override",
@@ -87,7 +79,6 @@ export function runTriagePipeline(
     return DentalPipelineResultSchema.parse(overrideResult);
   }
 
-  // Routine or high priority case safe for conversational agent
   const enrichedContext = buildEnrichedContext(triage, mergedConfig.clinicName);
   const passResult: DentalPipelineResult = {
     action: "pass_to_conversational_agent",
@@ -99,9 +90,6 @@ export function runTriagePipeline(
   return DentalPipelineResultSchema.parse(passResult);
 }
 
-/**
- * Service class wrapper for the dental triage pipeline.
- */
 export class DentalTriagePipeline {
   private config: Required<DentalPipelineConfig>;
 
@@ -109,23 +97,14 @@ export class DentalTriagePipeline {
     this.config = { ...DEFAULT_CONFIG, ...config };
   }
 
-  /**
-   * Process incoming patient message through the pipeline.
-   */
   public process(message: string): DentalPipelineResult {
     return runTriagePipeline(message, this.config);
   }
 
-  /**
-   * Get active clinic configuration.
-   */
   public getConfig(): Readonly<Required<DentalPipelineConfig>> {
     return { ...this.config };
   }
 
-  /**
-   * Update clinic configuration.
-   */
   public updateConfig(newConfig: Partial<DentalPipelineConfig>): void {
     this.config = { ...this.config, ...newConfig };
   }

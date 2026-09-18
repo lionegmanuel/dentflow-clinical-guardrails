@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// Dental Nomenclature FDI (Adult: Quadrants 1-4, Teeth 1-8)
 export const FdiToothSchema = z
   .number()
   .int()
@@ -17,7 +16,6 @@ export const FdiToothSchema = z
   );
 export type FdiTooth = z.infer<typeof FdiToothSchema>;
 
-// Quadrant identification (1: Upper Right, 2: Upper Left, 3: Lower Left, 4: Lower Right)
 export const DentalQuadrantSchema = z.union([
   z.literal(1),
   z.literal(2),
@@ -26,7 +24,6 @@ export const DentalQuadrantSchema = z.union([
 ]);
 export type DentalQuadrant = z.infer<typeof DentalQuadrantSchema>;
 
-// Tooth Position in Quadrant (1 to 8)
 export const ToothPositionSchema = z.union([
   z.literal(1),
   z.literal(2),
@@ -39,16 +36,14 @@ export const ToothPositionSchema = z.union([
 ]);
 export type ToothPosition = z.infer<typeof ToothPositionSchema>;
 
-// Clinical Urgency Level
 export const ClinicalUrgencySchema = z.enum([
-  "emergency", // Atencion inmediata en guardia (trauma con avulsion, celulitis/flemon, compromiso de via aerea)
-  "high_priority", // Dolor agudo / pulpitis irreversible, atencion en menos de 24 hs
-  "moderate", // Molestia menor, rotura de corona sin dolor severo
-  "routine_elective", // Consultas de estetica, implantes, alineadores, profilaxis
+  "emergency",
+  "high_priority",
+  "moderate",
+  "routine_elective",
 ]);
 export type ClinicalUrgency = z.infer<typeof ClinicalUrgencySchema>;
 
-// Dental Treatment Categories
 export const DentalTreatmentCategorySchema = z.enum([
   "implants_rehabilitation",
   "invisible_orthodontics",
@@ -62,7 +57,6 @@ export type DentalTreatmentCategory = z.infer<
   typeof DentalTreatmentCategorySchema
 >;
 
-// Recommended Actions
 export const TriageRecommendedActionSchema = z.enum([
   "immediate_emergency_call",
   "schedule_same_day_slot",
@@ -73,13 +67,12 @@ export type TriageRecommendedAction = z.infer<
   typeof TriageRecommendedActionSchema
 >;
 
-// Red Flag Definition and Result
 export const RedFlagTypeSchema = z.enum([
-  "airway_compromise", // Dificultad para tragar, respirar o hablar (angina de Ludwig)
-  "facial_cellulitis_fever", // Hinchazon facial visible y asimetrica con fiebre alta
-  "traumatic_tooth_avulsion", // Diente expulsado por golpe (ventana critica <60 min)
-  "uncontrolled_hemorrhage", // Sangrado activo incoercible post-extraccion o trauma
-  "severe_trismus", // Incapacidad de apertura bucal (<15mm) asociada a foco infeccioso
+  "airway_compromise",
+  "facial_cellulitis_fever",
+  "traumatic_tooth_avulsion",
+  "uncontrolled_hemorrhage",
+  "severe_trismus",
 ]);
 export type RedFlagType = z.infer<typeof RedFlagTypeSchema>;
 
@@ -92,7 +85,6 @@ export const DetectedRedFlagSchema = z.object({
 });
 export type DetectedRedFlag = z.infer<typeof DetectedRedFlagSchema>;
 
-// Triage Evaluation Result
 export const TriageEvaluationSchema = z.object({
   urgency: ClinicalUrgencySchema,
   isRedFlagPresent: z.boolean(),
@@ -105,7 +97,6 @@ export const TriageEvaluationSchema = z.object({
 });
 export type TriageEvaluation = z.infer<typeof TriageEvaluationSchema>;
 
-// Waitlist Candidate Schema for Chair Rescue
 export const PreferredTimeWindowSchema = z.enum([
   "morning",
   "afternoon",
@@ -124,7 +115,6 @@ export const WaitlistCandidateSchema = z.object({
 });
 export type WaitlistCandidate = z.infer<typeof WaitlistCandidateSchema>;
 
-// Match result for Chair Rescue
 export const ChairRescueMatchResultSchema = z.object({
   candidate: WaitlistCandidateSchema,
   matchScore: z.number().min(0).max(100),
@@ -137,13 +127,12 @@ export type ChairRescueMatchResult = z.infer<
   typeof ChairRescueMatchResultSchema
 >;
 
-// Objections Classification
 export const HighTicketObjectionCategorySchema = z.enum([
-  "fear_pain", // Miedo al dolor, agujas, cirugia o fobia al dentista
-  "financial_cost", // Presupuesto elevado, necesidad de cuotas o financiacion
-  "recovery_time", // Miedo al postoperatorio o ausencia laboral
-  "procedure_doubt", // Dudas sobre durabilidad de implantes/carillas o efectividad
-  "distrust_delay", // "Lo tengo que pensar", consulta con conyuge
+  "fear_pain",
+  "financial_cost",
+  "recovery_time",
+  "procedure_doubt",
+  "distrust_delay",
 ]);
 export type HighTicketObjectionCategory = z.infer<
   typeof HighTicketObjectionCategorySchema
@@ -158,7 +147,6 @@ export const ObjectionResolutionSchema = z.object({
 });
 export type ObjectionResolution = z.infer<typeof ObjectionResolutionSchema>;
 
-// Pipeline Final Result (Discriminated Union on action)
 export const DentalPipelineResultSchema = z.discriminatedUnion("action", [
   z.object({
     action: z.literal("pass_to_conversational_agent"),
